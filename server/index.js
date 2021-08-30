@@ -1,0 +1,15 @@
+const express = require("express");
+
+// process.env gives us access to environment variables
+// if this were production, we'd want to get the port from there
+const PORT = process.env.PORT || 3001;
+
+const app = express();
+
+app.get("/api/helloWorld", (req, res) => {
+    res.json({ message: "Hello, World!" });
+  });
+
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}`);
+});

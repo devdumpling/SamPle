@@ -1,0 +1,14 @@
+{
+  "name": "SamPle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Devon Wells <devon.wellsa@gmail.com>",
+  "license": "MIT",  
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "proxy": "http://localhost:3001",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
