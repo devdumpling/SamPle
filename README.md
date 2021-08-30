@@ -373,4 +373,28 @@ export const Form = () => {
 };
 ```
 
+Then we need to import this in `App.js` and then make use of our new component. Note we added it in the `<header>` below.
+
+### `App.js`
+
+```jsx
+...
+
+import { Form } from "./components/Form";
+
+...
+
+return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>{!data ? "Loading..." : data}</p>
+        <Form />
+      </header>      
+    </div>
+  );
+
+...
+```
+
 Now if you boot your server again and go to the page, you should be able to enter a name and submit. The server then takes that, manipulates it into a capitalized string, and returns it. We then show the updated string. 
