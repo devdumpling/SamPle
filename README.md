@@ -266,10 +266,12 @@ function App() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("/api/helloWorld")
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
+    if (!data)
+      fetch("/api/helloWorld")
+        .then((res) => res.json())
+        .then((data) => setData(data.message));
+    else console.log("We got the data:", data);
+  }, [data]);
 
   return (
     <div className="App">
@@ -284,6 +286,91 @@ function App() {
 export default App;
 ```
 
+Note: I'm not going to dive into the React code here too much. Basically, we have a `useEffect` hook which says "try to get the data if we don't have it" and re-renders anytime `data` changes (which should only be once). As well as a stateful variable `data` setup with a `useState` hook. These are React hook core concepts and are worth diving into on their own. 
+
 Now if you go into `client` and run `npm start` while your server is running in a different terminal, your browser should open with a sweet spinning logo and the response from our server! Neat!
 
+## 5. Next Steps
 
+So let's take that to the next level. We'll add another API endpoint `name-to-caps` that simply capitalizes its input.
+
+```js
+const express = require("express");
+
+// process.env gives us access to environment variables
+// if this were production, we'd want to get the port from there
+const PORT = process.env.PORT || 3001;
+
+const app = express();
+
+app.use(express.json());
+
+app.get("/api/helloWorld", (req, res) => {
+  res.json({ message: "Hello, World!" });
+});
+
+app.post("/api/name-to-caps", (req, res) => {  
+  const newName = req.body.name.toUpperCase();
+  console.log("WE MADE IT BIG!", newName);
+  res.json({ data: newName });
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}`);
+});
+```
+
+Now let's create a `Form` component to take an input and send it to our backend and manipulate the response. I'm running through this quickly because it's dinner, but...
+
+In `src` create a `components` folder. This isn't necessary, but is standard practice.
+
+Then in `components` create a `Form.jsx` file. Add this into it.
+
+### `Form.jsx`
+
+```jsx
+import { useState } from "react";
+
+export const Form = () => {
+  const [name, setName] = useState("");
+  const [nameCaps, setNameCaps] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch("/api/name-to-caps", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: name }),
+    });
+
+    if (response) {
+      // destructure the response
+      const { data } = await response.json();
+      setNameCaps(data);
+    }
+  };
+
+  const handleChange = (e) => {
+    setName(e.target.value);
+  };
+
+  return (
+    <div>
+      <h1>Hello there, {name || "stranger"}</h1>
+      <form onSubmit={handleSubmit}>
+        {nameCaps ? (
+          <h2>THAT'S {nameCaps} IN CAPS</h2>
+        ) : (
+          <h2>What's your name?</h2>
+        )}
+        <input type="text" value={name} onChange={handleChange} />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+};
+```
+
+Now if you boot your server again and go to the page, you should be able to enter a name and submit. The server then takes that, manipulates it into a capitalized string, and returns it. We then show the updated string. 
