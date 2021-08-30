@@ -122,10 +122,58 @@ From the root directory `/SamPle`:
 create-react-app client
 ```
 
-Now we'll have a `client` folder in addition to our `server` folder. We'll dig into its contents in a sec. First let's create a proxy in our `package.json` that forwards requests to our React app. Add this line to `package.json`. 
+Now we'll have a `client` folder in addition to our `server` folder. We'll dig into its contents in a sec. First let's create a proxy in __the client's__ `package.json` that forwards requests to our React app. Add this line to `client/package.json`. 
 
 ```JSON
 "proxy": "http://localhost:3001",
+```
+
+This is basically saying
+
+> Hey! If you get a request that I can't match, send it over to my guy the server, okay?!"
+
+The full `package.json` for the __`client`__ should then look like this:
+
+```json
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://localhost:3001",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
 ```
 
 Cool, now we can go start the `React` server. 
@@ -235,3 +283,7 @@ function App() {
 
 export default App;
 ```
+
+Now if you go into `client` and run `npm start` while your server is running in a different terminal, your browser should open with a sweet spinning logo and the response from our server! Neat!
+
+
